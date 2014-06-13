@@ -1,60 +1,74 @@
-(function (scope) {
+'use strict';
+
+/*****************************************************************************
+ *
+ * Meta-data structures
+ *
+ *****************************************************************************/
+(function (flac) {
 
   var _proto;
 
-  var scope.metadata = {
-    TYPE: Type,
+  var metadata = flac.metadata = {
     Metadata: Metadata,
+    StreamInfo: StreamInfo,
+    Padding: Padding,
+    Application: Application,
+    SeekTable: SeekTable,
+    VorbisComment: VorbisComment,
+    CueSheet: CueSheet,
+    Picture: Picture,
+    Unknown: Unknown
   };
 
-  /*****************************************************************************
-   *
-   * Meta-data structures
-   *
-   *****************************************************************************/
 
   /** An enumeration of the available metadata block types. */
-  function Type() {
-  }
 
-  _proto = Type.prototype;
-
-  _proto.STREAMINFO = 0;
+  metadata.TYPE_STREAMINFO = 0;
   /**< <A HREF="../format.html#metadata_block_streaminfo">STREAMINFO</A> block */
 
-  _proto.PADDING = 1;
+  metadata.TYPE_PADDING = 1;
   /**< <A HREF="../format.html#metadata_block_padding">PADDING</A> block */
 
-  _proto.APPLICATION = 2;
+  metadata.TYPE_APPLICATION = 2;
   /**< <A HREF="../format.html#metadata_block_application">APPLICATION</A> block */
 
-  _proto.SEEKTABLE = 3;
+  metadata.TYPE_SEEKTABLE = 3;
   /**< <A HREF="../format.html#metadata_block_seektable">SEEKTABLE</A> block */
 
-  _proto.VORBIS_COMMENT = 4;
+  metadata.TYPE_VORBIS_COMMENT = 4;
   /**< <A HREF="../format.html#metadata_block_vorbis_comment">VORBISCOMMENT</A> block (a.k.a. FLAC tags) */
 
-  _proto.CUESHEET = 5;
+  metadata.TYPE_CUESHEET = 5;
   /**< <A HREF="../format.html#metadata_block_cuesheet">CUESHEET</A> block */
 
-  _proto.PICTURE = 6;
+  metadata.TYPE_PICTURE = 6;
   /**< <A HREF="../format.html#metadata_block_picture">PICTURE</A> block */
 
-  _proto.UNDEFINED = 7;
+  metadata.TYPE_UNDEFINED = 7;
   /**< marker to denote beginning of undefined type range; this number will increase as new metadata types are added */
 
-  /** Maps a Type to a C string.
+  /** Maps a Type to a JS string.
    *
    *  Using a Type as the index to this array will
    *  give the string equivalent.  The contents should not be modified.
    */
-  _proto.STRING_TABLE = [];
+  metadata.TYPE_STRING_TABLE = [
+    'StreamInfo',
+    'Padding',
+    'Application',
+    'SeekTable',
+    'VorbisComment',
+    'CueSheet',
+    'Picture',
+    'Undefined'
+  ];
 
 
   /** FLAC metadata block structure.  (c.f. <A HREF="../format.html#metadata_block">format specification</A>)
    */
   function Metadata(type) {
-    this.type = type; // enum Type 
+    this.type = type; // enum metadata.TYPE_XXX
     /**< The type of the metadata block; used determine which member of the
      * \a data union to dereference.  If type >= FLAC__METADATA_TYPE_UNDEFINED
      * then \a data.unknown must be used. */
@@ -130,7 +144,7 @@
   /** FLAC STREAMINFO structure.  (c.f. <A HREF="../format.html#metadata_block_streaminfo">format specification</A>)
    */
   function StreamInfo() {
-    Metadata.call(this, Type.STREAMINFO);
+    Metadata.call(this, metadata.TYPE_STREAMINFO);
     this.min_blocksize = 0;
     this.max_blocksize = 0;
     this.min_framesize = 0;
@@ -166,7 +180,7 @@
   _proto.get_max_framesize = function () {};
   _proto.get_sample_rate = function () {};
   _proto.get_channels = function () {};
-  _proto.get_bits_per_sample(= function () {};
+  _proto.get_bits_per_sample = function () {};
   _proto.get_total_samples = function () {};
   _proto.get_md5sum = function () {};
 
@@ -183,7 +197,7 @@
   /** FLAC PADDING structure.  (c.f. <A HREF="../format.html#metadata_block_padding">format specification</A>)
    */
   function Padding() {
-    Metadata.call(this, Type.PADDING);
+    Metadata.call(this, metadata.TYPE_PADDING);
     this.dummy = 0;
     /**< Conceptually this is an empty struct since we don't store the
      * padding bytes.  Empty structs are not allowed by some C compilers,
@@ -201,7 +215,7 @@
   /** FLAC APPLICATION structure.  (c.f. <A HREF="../format.html#metadata_block_application">format specification</A>)
    */
   function Application() {
-    Metadata.call(this, Type.APPLICATION);
+    Metadata.call(this, metadata.TYPE_APPLICATION);
     this.id = '';
     this.data = null;
   }
@@ -261,7 +275,7 @@
    *   present in a stream.
    */
   function SeekTable() {
-    Metadata.call(this, Type.SEEKTABLE);
+    Metadata.call(this, metadata.TYPE_SEEKTABLE);
     this.num_points = 0;
     this.points = null; // FLAC__StreamMetadata_SeekPoint - TODO
   }
@@ -329,16 +343,16 @@
   _proto.get_field_name = function () {};
   _proto.get_field_value = function () {};
 
-  _proto.set_field = function (field, field_length);
-  _proto.set_field = function (field); // assumes \a field is NUL-terminated
-  _proto.set_field_name = function (field_name);
-  _proto.set_field_value = function (field_value, field_value_length);
-  _proto.set_field_value = function (field_value); // assumes \a field_value is NUL-terminated
+  _proto.set_field = function (field, field_length) {};
+  _proto.set_field = function (field) {}; // assumes \a field is NUL-terminated
+  _proto.set_field_name = function (field_name) {};
+  _proto.set_field_value = function (field_value, field_value_length) {};
+  _proto.set_field_value = function (field_value) {}; // assumes \a field_value is NUL-terminated
 
   /** FLAC VORBIS_COMMENT structure.  (c.f. <A HREF="../format.html#metadata_block_vorbis_comment">format specification</A>)
    */
   function VorbisComment() {
-    Metadata.call(this, Type.VORBIS_COMMENT);
+    Metadata.call(this, metadata.TYPE_VORBIS_COMMENT);
     this.vendor_string = null; // FLAC__StreamMetadata_VorbisComment_Entry 
     this.num_comments = 0;
     this.comments = []; // FLAC__StreamMetadata_VorbisComment_Entry 
@@ -354,34 +368,34 @@
   _proto.get_comment = function (index) {};
 
   //! See FLAC__metadata_object_vorbiscomment_set_vendor_string()
-  _proto.set_vendor_string = function(string); // NUL-terminated UTF-8 string
+  _proto.set_vendor_string = function(string) {}; // NUL-terminated UTF-8 string
 
   //! See FLAC__metadata_object_vorbiscomment_resize_comments()
-  _proto.resize_comments = function(new_num_comments);
+  _proto.resize_comments = function(new_num_comments) {};
 
   //! See FLAC__metadata_object_vorbiscomment_set_comment = function()
-  _proto.set_comment = function(index, entry);
+  _proto.set_comment = function(index, entry) {};
 
   //! See FLAC__metadata_object_vorbiscomment_insert_comment()
-  _proto.insert_comment = function(index, entry);
+  _proto.insert_comment = function(index, entry) {};
 
   //! See FLAC__metadata_object_vorbiscomment_append_comment()
-  _proto.append_comment = function(entry);
+  _proto.append_comment = function(entry) {};
 
   //! See FLAC__metadata_object_vorbiscomment_replace_comment()
-  _proto.replace_comment = function(entry, all);
+  _proto.replace_comment = function(entry, all) {};
 
   //! See FLAC__metadata_object_vorbiscomment_delete_comment()
-  _proto.delete_comment = function(index);
+  _proto.delete_comment = function(index) {};
 
   //! See FLAC__metadata_object_vorbiscomment_find_entry_from()
-  int find_entry_from = function(offset, field_name);
+  _proto.find_entry_from = function(offset, field_name) {};
 
   //! See FLAC__metadata_object_vorbiscomment_remove_entry_matching()
-  int remove_entry_matching = function(field_name);
+  _proto.remove_entry_matching = function(field_name) {};
 
   //! See FLAC__metadata_object_vorbiscomment_remove_entries_matching()
-  int remove_entries_matching = function(field_name);
+  _proto.remove_entries_matching = function(field_name) {};
 
   /** FLAC CUESHEET track index structure.  (See the
    * <A HREF="../format.html#cuesheet_track_index">format specification</A> for
@@ -440,12 +454,32 @@
   _proto.RESERVED_LEN = 110;
   _proto.NUM_INDICES_LEN = 8;
 
+  _proto.is_valid = function () {}; ///< Returns \c true iff object was properly constructed.
+  _proto.get_offset = function () {};
+  _proto.get_number = function () {};
+  _proto.get_isrc = function () {};
+  _proto.get_type = function () {};
+  _proto.get_pre_emphasis = function () {};
+
+  _proto.get_num_indices = function () {};
+  _proto.get_index = function (i) {};
+
+  _proto.get_track = function () {};
+
+  _proto.set_offset = function (value) {};
+  _proto.set_number = function (value) {};
+  _proto.set_isrc = function (value) {};
+  _proto.set_type = function (value) {};
+  _proto.set_pre_emphasis = function (value) {};
+
+  _proto.set_index = function (i, index) {};
+
   /** FLAC CUESHEET structure.  (See the
    * <A HREF="../format.html#metadata_block_cuesheet">format specification</A>
    * for the full description of each field.)
    */
   function CueSheet() {
-    Metadata.call(this, Type.CUESHEET);
+    Metadata.call(this, metadata.TYPE_CUESHEET);
     this.media_catalog_number = '';
     /**< Media catalog number, in ASCII printable characters 0x20-0x7e.  In
      * general, the media catalog number may be 0 to 128 bytes long; any
@@ -474,11 +508,57 @@
   _proto.RESERVED_LEN = 2071;
   _proto.NUM_TRACKS_LEN = 8;
 
+  _proto.get_media_catalog_number = function () {};
+  _proto.get_lead_in = function () {};
+  _proto.get_is_cd = function () {};
+
+  _proto.get_num_tracks = function () {};
+  _proto.get_track = function (i) {};
+
+  _proto.set_media_catalog_number = function (value) {};
+  _proto.set_lead_in = function (value) {};
+  _proto.set_is_cd = function (value) {};
+
+  _proto.set_index = function (track_num, index_num, index) {};
+
+  //! See FLAC__metadata_object_cuesheet_track_resize_indices()
+  _proto.resize_indices = function (track_num, new_num_indices) {};
+
+  //! See FLAC__metadata_object_cuesheet_track_insert_index()
+  _proto.insert_index = function (track_num, index_num, index) {};
+
+  //! See FLAC__metadata_object_cuesheet_track_insert_blank_index()
+  _proto.insert_blank_index = function (track_num, index_num) {};
+
+  //! See FLAC__metadata_object_cuesheet_track_delete_index()
+  _proto.delete_index = function (track_num, index_num) {};
+
+  //! See FLAC__metadata_object_cuesheet_resize_tracks()
+  _proto.resize_tracks = function (new_num_tracks) {};
+
+  //! See FLAC__metadata_object_cuesheet_set_track()
+  _proto.set_track = function (i, track) {};
+
+  //! See FLAC__metadata_object_cuesheet_insert_track()
+  _proto.insert_track = function (i, track) {};
+
+  //! See FLAC__metadata_object_cuesheet_insert_blank_track()
+  _proto.insert_blank_track = function (i) {};
+
+  //! See FLAC__metadata_object_cuesheet_delete_track()
+  _proto.delete_track = function (i) {};
+
+  //! See FLAC__metadata_object_cuesheet_is_legal()
+  _proto.is_legal = function (check_cd_da_subset, violation) {};
+
+  //! See FLAC__metadata_object_cuesheet_calculate_cddb_id()
+  _proto.calculate_cddb_id = function () {};
+
   /** An enumeration of the PICTURE types (see FLAC__StreamMetadataPicture and id3 v2.4 APIC tag). */
   function FLAC__StreamMetadata_Picture_Type() {
   }
 
-  _proto = FLAC__StreamMetadata_Picture_Type.prototype;
+  _proto = FLAC__StreamMetadata_Picture_Type.TYPE_prototype;
 
   _proto.OTHER = 0; /**< Other */
   _proto.FILE_ICON_STANDARD = 1; /**< 32x32 pixels 'file icon' (PNG only) */
@@ -516,9 +596,9 @@
    * for the full description of each field.)
    */
   function Picture() {
-    Metadata.call(this, Type.PICTURE);
+    Metadata.call(this, metadata.TYPE_PICTURE);
 
-    this.type = FLAC__StreamMetadata_Picture_Type.UNDEFINED; // FLAC__StreamMetadata_Picture_Type 
+    this.type = FLAC__StreamMetadata_Picture_Type.TYPE_UNDEFINED; // FLAC__StreamMetadata_Picture_Type 
     /**< The kind of picture stored. */
 
     this.mime_type = '';
@@ -532,7 +612,7 @@
      * for convenience.
      */
 
-    this.description = '';;
+    this.description = '';
     /**< Picture's description in UTF-8, NUL terminated.  In file storage,
      * the description is stored as a 32-bit length followed by the UTF-8
      * string with no NUL terminator, but is converted to a plain C string
@@ -572,16 +652,50 @@
   _proto.COLORS_LEN = 32;
   _proto.DATA_LENGTH_LEN = 32;
 
+  _proto.get_type = function () {};
+  _proto.get_mime_type = function () {}; // NUL-terminated printable ASCII string
+  _proto.get_description = function () {}; // NUL-terminated UTF-8 string
+  _proto.get_width = function () {};
+  _proto.get_height = function () {};
+  _proto.get_depth = function () {};
+  _proto.get_colors = function () {}; ///< a return value of \c 0 means true-color, i.e. 2^depth colors
+  _proto.get_data = function () {};
+
+  _proto.set_type = function (type) {};
+
+  //! See FLAC__metadata_object_picture_set_mime_type()
+  _proto.set_mime_type = function (string) {}; // NUL-terminated printable ASCII string
+
+  //! See FLAC__metadata_object_picture_set_description()
+  _proto.set_description = function (string) {}; // NUL-terminated UTF-8 string
+
+  _proto.set_width = function (value) {};
+  _proto.set_height = function (value) {};
+  _proto.set_depth = function (value) {};
+  _proto.set_colors = function (value) {}; ///< a value of \c 0 means true-color, i.e. 2^depth colors
+
+  //! See FLAC__metadata_object_picture_set_data()
+  _proto.set_data = function (data, data_length) {};
+
+  //! See FLAC__metadata_object_picture_is_legal()
+  _proto.is_legal = function (violation) {};
+
   /** Structure that is used when a metadata block of unknown type is loaded.
    *  The contents are opaque.  The structure is used only internally to
    *  correctly handle unknown metadata.
    */
   function Unknown() {
-    Metadata.call(this, Type.UNKNOWN);
+    Metadata.call(this, metadata.TYPE_UNKNOWN);
     this.data = null;
   }
 
   _proto = Unknown.prototype = Object.create(Metadata.prototype);
   _proto.constructor = Unknown;
 
-}(flac));
+  _proto.get_data = function () {};
+
+  //! This form always copies \a data
+  _proto.set_data = function (data, length) {};
+  _proto.set_data = function (data, length, copy) {};
+
+}());

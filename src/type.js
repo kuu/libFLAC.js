@@ -34,40 +34,11 @@
     this.metadata = []; // FLAC__StreamMetadata
     this.num_metadata_blocks = 0;
     this.streaminfo_offset = 0;
-    this.seektable_offset = 0
+    this.seektable_offset = 0;
     this.audio_offset = 0;
 // #if FLAC__HAS_OGG
-    this.ogg_encoder_aspect; // FLAC__OggEncoderAspect 
+    this.ogg_encoder_aspect = null; // FLAC__OggEncoderAspect 
 // #endif
-  }
-
-  /** FLAC metadata block structure.  (c.f. <A HREF="../format.html#metadata_block">format specification</A>)
-   */
-  function FLAC__StreamMetadata() {
-	  this.type = FLAC__MetadataTYpe.UNDEFINED; // enum FLAC__MetadataType 
-	  /**< The type of the metadata block; used determine which member of the
-	   * \a data union to dereference.  If type >= FLAC__METADATA_TYPE_UNDEFINED
-	   * then \a data.unknown must be used. */
-
-	  this.is_last = false;
-	  /**< \c true if this metadata block is the last, else \a false */
-
-	  this.length = 0;
-    /**< Length, in bytes, of the block data as it appears in the stream. */
-
-    this.data = null;
-	  /**< Polymorphic block data; use the \a type value to determine which
-	   * to use. */
-	union {
-		FLAC__StreamMetadata_StreamInfo stream_info;
-		FLAC__StreamMetadata_Padding padding;
-		FLAC__StreamMetadata_Application application;
-		FLAC__StreamMetadata_SeekTable seek_table;
-		FLAC__StreamMetadata_VorbisComment vorbis_comment;
-		FLAC__StreamMetadata_CueSheet cue_sheet;
-		FLAC__StreamMetadata_Picture picture;
-		FLAC__StreamMetadata_Unknown unknown;
-	} data;
   }
 
 }(this));
