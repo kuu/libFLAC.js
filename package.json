@@ -1,0 +1,17 @@
+{
+  "name": "libFLAC.js",
+  "version": "0.0.0",
+  "repository": "",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.7.0",
+    "gulp-load-plugins": "^0.5.1",
+    "gulp-util": "^2.2.16",
+    "gulp-jshint": "^1.6.2",
+    "gulp-clean": "^0.3.0",
+    "gulp-size": "^0.3.1"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  }
+}
