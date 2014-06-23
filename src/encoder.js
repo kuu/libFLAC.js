@@ -83,10 +83,10 @@ var flac = {};
     this.metadata = []; // FLAC__StreamMetadata
     this.num_metadata_blocks = 0;
     this.streaminfo_offset = 0;
-    this.seektable_offset = 0
+    this.seektable_offset = 0;
     this.audio_offset = 0;
 // #if FLAC__HAS_OGG
-    this.ogg_encoder_aspect; // FLAC__OggEncoderAspect 
+    this.ogg_encoder_aspect = null; // FLAC__OggEncoderAspect 
 // #endif
   }
 

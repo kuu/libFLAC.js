@@ -66,7 +66,7 @@
   /** FLAC metadata block structure.  (c.f. <A HREF="../format.html#metadata_block">format specification</A>)
    */
   function Metadata(type) {
-    this.type = type; // enum metadata.TYPE_XXX
+    this.type = type; // enum Metadata.TYPE_XXX
     /**< The type of the metadata block; used determine which member of the
      * \a data union to dereference.  If type >= FLAC__METADATA_TYPE_UNDEFINED
      * then \a data.unknown must be used. */
@@ -142,7 +142,7 @@
   /** FLAC STREAMINFO structure.  (c.f. <A HREF="../format.html#metadata_block_streaminfo">format specification</A>)
    */
   function StreamInfo() {
-    Metadata.call(this, metadata.TYPE_STREAMINFO);
+    Metadata.call(this, Metadata.TYPE_STREAMINFO);
     this.min_blocksize = 0;
     this.max_blocksize = 0;
     this.min_framesize = 0;
@@ -195,7 +195,7 @@
   /** FLAC PADDING structure.  (c.f. <A HREF="../format.html#metadata_block_padding">format specification</A>)
    */
   function Padding() {
-    Metadata.call(this, metadata.TYPE_PADDING);
+    Metadata.call(this, Metadata.TYPE_PADDING);
     this.dummy = 0;
     /**< Conceptually this is an empty struct since we don't store the
      * padding bytes.  Empty structs are not allowed by some C compilers,
@@ -213,7 +213,7 @@
   /** FLAC APPLICATION structure.  (c.f. <A HREF="../format.html#metadata_block_application">format specification</A>)
    */
   function Application() {
-    Metadata.call(this, metadata.TYPE_APPLICATION);
+    Metadata.call(this, Metadata.TYPE_APPLICATION);
     this.id = '';
     this.data = null;
   }
@@ -273,7 +273,7 @@
    *   present in a stream.
    */
   function SeekTable() {
-    Metadata.call(this, metadata.TYPE_SEEKTABLE);
+    Metadata.call(this, Metadata.TYPE_SEEKTABLE);
     this.num_points = 0;
     this.points = null; // FLAC__StreamMetadata_SeekPoint - TODO
   }
@@ -350,7 +350,7 @@
   /** FLAC VORBIS_COMMENT structure.  (c.f. <A HREF="../format.html#metadata_block_vorbis_comment">format specification</A>)
    */
   function VorbisComment() {
-    Metadata.call(this, metadata.TYPE_VORBIS_COMMENT);
+    Metadata.call(this, Metadata.TYPE_VORBIS_COMMENT);
     this.vendor_string = null; // FLAC__StreamMetadata_VorbisComment_Entry 
     this.num_comments = 0;
     this.comments = []; // FLAC__StreamMetadata_VorbisComment_Entry 
@@ -477,7 +477,7 @@
    * for the full description of each field.)
    */
   function CueSheet() {
-    Metadata.call(this, metadata.TYPE_CUESHEET);
+    Metadata.call(this, Metadata.TYPE_CUESHEET);
     this.media_catalog_number = '';
     /**< Media catalog number, in ASCII printable characters 0x20-0x7e.  In
      * general, the media catalog number may be 0 to 128 bytes long; any
@@ -594,7 +594,7 @@
    * for the full description of each field.)
    */
   function Picture() {
-    Metadata.call(this, metadata.TYPE_PICTURE);
+    Metadata.call(this, Metadata.TYPE_PICTURE);
 
     this.type = FLAC__StreamMetadata_Picture_Type.TYPE_UNDEFINED; // FLAC__StreamMetadata_Picture_Type 
     /**< The kind of picture stored. */
@@ -683,7 +683,7 @@
    *  correctly handle unknown metadata.
    */
   function Unknown() {
-    Metadata.call(this, metadata.TYPE_UNKNOWN);
+    Metadata.call(this, Metadata.TYPE_UNKNOWN);
     this.data = null;
   }
 
