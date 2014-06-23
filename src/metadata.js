@@ -1,11 +1,16 @@
-(function (scope) {
+(function () {
 
   var _proto;
 
-  var scope.metadata = {
-    TYPE: Type,
-    Metadata: Metadata,
-  };
+  flac.Metadata = Metadata;
+  flac.StreamInfo = StreamInfo;
+  flac.Padding = Padding;
+  flac.Application = Application;
+  flac.SeekTable = SeekTable;
+  flac.VorbisComment = VorbisComment;
+  flac.CueSheet = CueSheet;
+  flac.Picture = Picture;
+  flac.Unknown = Unknown;
 
   /*****************************************************************************
    *
@@ -14,33 +19,29 @@
    *****************************************************************************/
 
   /** An enumeration of the available metadata block types. */
-  function Type() {
-  }
 
-  _proto = Type.prototype;
-
-  _proto.STREAMINFO = 0;
+  Metadata.STREAMINFO = 0;
   /**< <A HREF="../format.html#metadata_block_streaminfo">STREAMINFO</A> block */
 
-  _proto.PADDING = 1;
+  Metadata.PADDING = 1;
   /**< <A HREF="../format.html#metadata_block_padding">PADDING</A> block */
 
-  _proto.APPLICATION = 2;
+  Metadata.APPLICATION = 2;
   /**< <A HREF="../format.html#metadata_block_application">APPLICATION</A> block */
 
-  _proto.SEEKTABLE = 3;
+  Metadata.SEEKTABLE = 3;
   /**< <A HREF="../format.html#metadata_block_seektable">SEEKTABLE</A> block */
 
-  _proto.VORBIS_COMMENT = 4;
+  Metadata.VORBIS_COMMENT = 4;
   /**< <A HREF="../format.html#metadata_block_vorbis_comment">VORBISCOMMENT</A> block (a.k.a. FLAC tags) */
 
-  _proto.CUESHEET = 5;
+  Metadata.CUESHEET = 5;
   /**< <A HREF="../format.html#metadata_block_cuesheet">CUESHEET</A> block */
 
-  _proto.PICTURE = 6;
+  Metadata.PICTURE = 6;
   /**< <A HREF="../format.html#metadata_block_picture">PICTURE</A> block */
 
-  _proto.UNDEFINED = 7;
+  Metadata.UNDEFINED = 7;
   /**< marker to denote beginning of undefined type range; this number will increase as new metadata types are added */
 
   /** Maps a Type to a C string.
@@ -48,7 +49,7 @@
    *  Using a Type as the index to this array will
    *  give the string equivalent.  The contents should not be modified.
    */
-  _proto.STRING_TABLE = [];
+  Metadata.STRING_TABLE = [];
 
 
   /** FLAC metadata block structure.  (c.f. <A HREF="../format.html#metadata_block">format specification</A>)
@@ -584,4 +585,4 @@
   _proto = Unknown.prototype = Object.create(Metadata.prototype);
   _proto.constructor = Unknown;
 
-}(flac));
+}());
