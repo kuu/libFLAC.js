@@ -3,7 +3,7 @@
  * Copyright (C) 2014 Kuu Miyazaki
  *
  * This is a translation of libFLAC from C/C++ to JavaScript.
- * I tried preserve its naming convention and comments as best as pssible.
+ * I tried preserve its structure, naming convention and comments as best as pssible.
  *
  * libFLAC - Free Lossless Audio Codec library
  * Copyright (C) 2000-2009  Josh Coalson
@@ -1081,63 +1081,63 @@ var flac = {};
   _proto.setMetadata = function (metadata, num_blocks) {
   };
 
-   /** Get the current encoder state.
-    *
-    * \param  encoder  An encoder instance to query.
-    * \assert
-    *    \code encoder != NULL \endcode
-    * \retval FLAC__StreamEncoderState
-    *    The current encoder state.
-    */
-   _proto.getState = function () {
-   };
+  /** Get the current encoder state.
+   *
+   * \param  encoder  An encoder instance to query.
+   * \assert
+   *    \code encoder != NULL \endcode
+   * \retval FLAC__StreamEncoderState
+   *    The current encoder state.
+   */
+  _proto.getState = function () {
+  };
 
-   /** Get the state of the verify stream decoder.
-    *  Useful when the stream encoder state is
-    *  \c FLAC__STREAM_ENCODER_VERIFY_DECODER_ERROR.
-    *
-    * \param  encoder  An encoder instance to query.
-    * \assert
-    *    \code encoder != NULL \endcode
-    * \retval FLAC__StreamDecoderState
-    *    The verify stream decoder state.
-    */
-   _proto.getVerifyDecoderState = function () {
-   };
+  /** Get the state of the verify stream decoder.
+   *  Useful when the stream encoder state is
+   *  \c FLAC__STREAM_ENCODER_VERIFY_DECODER_ERROR.
+   *
+   * \param  encoder  An encoder instance to query.
+   * \assert
+   *    \code encoder != NULL \endcode
+   * \retval FLAC__StreamDecoderState
+   *    The verify stream decoder state.
+   */
+  _proto.getVerifyDecoderState = function () {
+  };
 
-   /** Get the current encoder state as a C string.
-    *  This version automatically resolves
-    *  \c FLAC__STREAM_ENCODER_VERIFY_DECODER_ERROR by getting the
-    *  verify decoder's state.
-    *
-    * \param  encoder  A encoder instance to query.
-    * \assert
-    *    \code encoder != NULL \endcode
-    * \retval const char *
-    *    The encoder state as a C string.  Do not modify the contents.
-    */
-   _proto.getResolvedStateString = function () {
-   };
+  /** Get the current encoder state as a C string.
+   *  This version automatically resolves
+   *  \c FLAC__STREAM_ENCODER_VERIFY_DECODER_ERROR by getting the
+   *  verify decoder's state.
+   *
+   * \param  encoder  A encoder instance to query.
+   * \assert
+   *    \code encoder != NULL \endcode
+   * \retval const char *
+   *    The encoder state as a C string.  Do not modify the contents.
+   */
+  _proto.getResolvedStateString = function () {
+  };
 
-   /** Get relevant values about the nature of a verify decoder error.
-    *  Useful when the stream encoder state is
-    *  \c FLAC__STREAM_ENCODER_VERIFY_DECODER_ERROR.  The arguments should
-    *  be addresses in which the stats will be returned, or NULL if value
-    *  is not desired.
-    *
-    * \param  encoder  An encoder instance to query.
-    * \param  absolute_sample  The absolute sample number of the mismatch.
-    * \param  frame_number  The number of the frame in which the mismatch occurred.
-    * \param  channel       The channel in which the mismatch occurred.
-    * \param  sample        The number of the sample (relative to the frame) in
-    *                       which the mismatch occurred.
-    * \param  expected      The expected value for the sample in question.
-    * \param  got           The actual value returned by the decoder.
-    * \assert
-    *    \code encoder != NULL \endcode
-    */
-   _proto.getVerifyDecoderErrorStats = function (absolute_sample, frame_number, channel, sample, expected, got) {
-   };
+  /** Get relevant values about the nature of a verify decoder error.
+   *  Useful when the stream encoder state is
+   *  \c FLAC__STREAM_ENCODER_VERIFY_DECODER_ERROR.  The arguments should
+   *  be addresses in which the stats will be returned, or NULL if value
+   *  is not desired.
+   *
+   * \param  encoder  An encoder instance to query.
+   * \param  absolute_sample  The absolute sample number of the mismatch.
+   * \param  frame_number  The number of the frame in which the mismatch occurred.
+   * \param  channel       The channel in which the mismatch occurred.
+   * \param  sample        The number of the sample (relative to the frame) in
+   *                       which the mismatch occurred.
+   * \param  expected      The expected value for the sample in question.
+   * \param  got           The actual value returned by the decoder.
+   * \assert
+   *    \code encoder != NULL \endcode
+   */
+  _proto.getVerifyDecoderErrorStats = function (absolute_sample, frame_number, channel, sample, expected, got) {
+  };
 
   /** Get the "verify" flag.
    *
@@ -1682,8 +1682,14 @@ var flac = {};
   _proto.processInterleaved = function (buffer, samples) {
   };
 
+
+  /***********************************************************************
+   *
+   * Protected class data
+   *
+   ***********************************************************************/
   function EncoderProtected() {
-    this.state = 0; // enum EncoderState 
+    this.state = 0;
     this.verify = false;
     this.streamable_subset = false;
     this.do_md5 = false;
@@ -1695,7 +1701,7 @@ var flac = {};
     this.blocksize = 0;
 // #ifndef FLAC__INTEGER_ONLY_LIBRARY
     //this.num_apodizations = 0;
-    //this.apodizations[FLAC__MAX_APODIZATION_FUNCTIONS]; // FLAC__ApodizationSpecification 
+    //this.apodizations[FLAC__MAX_APODIZATION_FUNCTIONS]; // FLAC__ApodizationSpec 
 // #endif
     this.max_lpc_order = 0;
     this.qlp_coeff_precision = 0;
@@ -1706,7 +1712,7 @@ var flac = {};
     this.max_residual_partition_order = 0;
     this.rice_parameter_search_dist = 0;
     this.total_samples_estimate = 0;
-    this.metadata = []; // FLAC__StreamMetadata
+    this.metadata = [];
     this.num_metadata_blocks = 0;
     this.streaminfo_offset = 0;
     this.seektable_offset = 0;
@@ -1715,5 +1721,151 @@ var flac = {};
     this.ogg_encoder_aspect = null; // FLAC__OggEncoderAspect 
 // #endif
   }
+
+  function ApodizationSpec() {
+    this.type = 0;
+    this.param = null;
+  }
+	ApodizationSpec.APODIZATION_BARTLETT = 0;
+	ApodizationSpec.APODIZATION_BARTLETT_HANN = 1;
+	ApodizationSpec.APODIZATION_BLACKMAN = 2;
+	ApodizationSpec.APODIZATION_BLACKMAN_HARRIS_4TERM_92DB_SIDELOBE = 3;
+	ApodizationSpec.APODIZATION_CONNES = 4;
+	ApodizationSpec.APODIZATION_FLATTOP = 5;
+	ApodizationSpec.APODIZATION_GAUSS = 6;
+	ApodizationSpec.APODIZATION_HAMMING = 7;
+	ApodizationSpec.APODIZATION_HANN = 8;
+	ApodizationSpec.APODIZATION_KAISER_BESSEL = 9;
+	ApodizationSpec.APODIZATION_NUTTALL = 10;
+	ApodizationSpec.APODIZATION_RECTANGLE = 11;
+	ApodizationSpec.APODIZATION_TRIANGLE = 12;
+	ApodizationSpec.APODIZATION_TUKEY = 13;
+	ApodizationSpec.APODIZATION_WELCH = 14;
+
+  /***********************************************************************
+   *
+   * Private class data
+   *
+   ***********************************************************************/
+
+  function EncoderPrivate () {
+	  this.input_capacity = 0;                          /* current size (in samples) of the signal and residual buffers */
+    this.integer_signal = [];  /* the integer version of the input signal */ // *int[FLAC__MAX_CHANNELS]
+    this.integer_signal_mid_side = [];          /* the integer version of the mid-side input signal (stereo only) */ // *int[2]
+//#ifndef FLAC__INTEGER_ONLY_LIBRARY
+  //FLAC__real *real_signal[FLAC__MAX_CHANNELS];      /* (@@@ currently unused) the floating-point version of the input signal */
+	//FLAC__real *real_signal_mid_side[2];              /* (@@@ currently unused) the floating-point version of the mid-side input signal (stereo only) */
+	//FLAC__real *window[FLAC__MAX_APODIZATION_FUNCTIONS]; /* the pre-computed floating-point window for each apodization function */
+	//FLAC__real *windowed_signal;                      /* the integer_signal[] * current window[] */
+//#endif
+    this.subframe_bps = [];        /* the effective bits per sample of the input signal (stream bps - wasted bits) */ // unsigned[FLAC__MAX_CHANNELS]
+    this.subframe_bps_mid_side = [];                /* the effective bits per sample of the mid-side input signal (stream bps - wasted bits + 0/1) */ // unsinged[2]
+	  this.residual_workspace = []; /* each channel has a candidate and best workspace where the subframe residual signals will be stored */ // (int32*)[FLAC__MAX_CHANNELS][2]
+	  this.residual_workspace_mid_side = []; // (int32*)[2][2]
+	  this.subframe_workspace = []; // Subframe[FLAC__MAX_CHANNELS][2]
+    this.subframe_workspace_mid_side = []; // Subframe[2][2]
+	  this.subframe_workspace_ptr = []; // (Subframe*)[FLAC__MAX_CHANNELS][2];
+	  this.subframe_workspace_ptr_mid_side = []; // (Subframe*)[2][2];
+	  this.partitioned_rice_contents_workspace = []; // EntropyCodingMethod_PartitionedRiceContents[FLAC__MAX_CHANNELS][2];
+	  this.partitioned_rice_contents_workspace_mid_side = []; // EntropyCodingMethod_PartitionedRiceContents[FLAC__MAX_CHANNELS][2];
+	  this.partitioned_rice_contents_workspace_ptr = []; // (EntropyCodingMethod_PartitionedRiceContents*)[FLAC__MAX_CHANNELS][2];
+    this.partitioned_rice_contents_workspace_ptr_mid_side = []; // (EntropyCodingMethod_PartitionedRiceContents*)[FLAC__MAX_CHANNELS][2];
+	  this.best_subframe = []; // unsigned[FLAC__MAX_CHANNELS];       /* index (0 or 1) into 2nd dimension of the above workspaces */
+	  this.best_subframe_mid_side = []; // unsigned[2];
+	  this.best_subframe_bits = []; // unsigned[FLAC__MAX_CHANNELS];  /* size in bits of the best subframe for each channel */
+	  this.best_subframe_bits_mid_side = []; // unsigned[2];
+	  this.abs_residual_partition_sums = null; //FLAC__uint64* /* workspace where the sum of abs(candidate residual) for each partition is stored */
+	  this.raw_bits_per_partition = null; //unsigned* /* workspace where the sum of silog2(candidate residual) for each partition is stored */
+	  this.frame = null;  //FLAC__BitWriter* /* the current frame being worked on */
+	  this.loose_mid_side_stereo_frames = 0; /* rounded number of frames the encoder will use before trying both independent and mid/side frames again */
+	  this.loose_mid_side_stereo_frame_count = 0; /* number of frames using the current channel assignment */
+	  this.last_channel_assignment = null; //FLAC__ChannelAssignment 
+	  this.streaminfo = null; //FLAC__StreamMetadata /* scratchpad for STREAMINFO as it is built */
+	  this.seek_table = null; //FLAC__StreamMetadata_SeekTable* /* pointer into encoder->protected_->metadata_ where the seek table is */
+	  this.current_sample_number = 0;
+	  this.current_frame_number = 0;
+	  this.md5context = null; //FLAC__MD5Context 
+	  this.cpuinfo = null; //FLAC__CPUInfo 
+//#ifndef FLAC__INTEGER_ONLY_LIBRARY
+	//unsigned (*local_fixed_compute_best_predictor)(const FLAC__int32 data[], unsigned data_len, FLAC__float residual_bits_per_sample[FLAC__MAX_FIXED_ORDER+1]);
+//#else
+	//unsigned (*local_fixed_compute_best_predictor)(const FLAC__int32 data[], unsigned data_len, FLAC__fixedpoint residual_bits_per_sample[FLAC__MAX_FIXED_ORDER+1]);
+	  this.local_fixed_compute_best_predictor = null; // Function
+//#endif
+/*
+#ifndef FLAC__INTEGER_ONLY_LIBRARY
+	void (*local_lpc_compute_autocorrelation)(const FLAC__real data[], unsigned data_len, unsigned lag, FLAC__real autoc[]);
+	void (*local_lpc_compute_residual_from_qlp_coefficients)(const FLAC__int32 *data, unsigned data_len, const FLAC__int32 qlp_coeff[], unsigned order, int lp_quantization, FLAC__int32 residual[]);
+	void (*local_lpc_compute_residual_from_qlp_coefficients_64bit)(const FLAC__int32 *data, unsigned data_len, const FLAC__int32 qlp_coeff[], unsigned order, int lp_quantization, FLAC__int32 residual[]);
+	void (*local_lpc_compute_residual_from_qlp_coefficients_16bit)(const FLAC__int32 *data, unsigned data_len, const FLAC__int32 qlp_coeff[], unsigned order, int lp_quantization, FLAC__int32 residual[]);
+#endif
+*/
+	  this.use_wide_by_block = false; /* use slow 64-bit versions of some functions because of the block size */
+	  this.use_wide_by_partition = false;      /* use slow 64-bit versions of some functions because of the min partition order and blocksize */
+	  this.use_wide_by_order = false;  /* use slow 64-bit versions of some functions because of the lpc order */
+	  this.disable_constant_subframes = false;
+	  this.disable_fixed_subframes = false;
+	  this.disable_verbatim_subframes = false;
+//#if FLAC__HAS_OGG
+	  this.is_ogg = false;
+//#endif
+	  this.read_callback = null; /* currently only needed for Ogg FLAC */
+	  this.seek_callback = null;
+	  this.tell_callback = null;
+	  this.write_callback = null;
+	  this.metadata_callback = null;
+	  this.progress_callback = null;
+	  this.client_data = null;
+	  this.first_seekpoint_to_check = false;
+	  this.file = null;             /* only used when encoding to a file */
+	  this.bytes_written = 0;
+	  this.samples_written = 0;
+	  this.frames_written = 0;
+	  this.total_frames_estimate = 0;
+	  /* unaligned (original) pointers to allocated data */
+	  this.integer_signal_unaligned = []; // (int32*)[FLAC__MAX_CHANNELS];
+	  this.integer_signal_mid_side_unaligned = []; // (int32*)[2];
+//#ifndef FLAC__INTEGER_ONLY_LIBRARY
+	//FLAC__real *real_signal_unaligned[FLAC__MAX_CHANNELS]; /* (@@@ currently unused) */
+	//FLAC__real *real_signal_mid_side_unaligned[2]; /* (@@@ currently unused) */
+	//FLAC__real *window_unaligned[FLAC__MAX_APODIZATION_FUNCTIONS];
+	//FLAC__real *windowed_signal_unaligned;
+//#endif
+	  this.residual_workspace_unaligned = []; // (int32*)[FLAC__MAX_CHANNELS][2];
+	  this.residual_workspace_mid_side_unaligned = []; // (int32*)[2][2];
+	  this.abs_residual_partition_sums_unaligned = null; // int64*
+	  this.raw_bits_per_partition_unaligned = null; // unsingned*
+	  /*
+	   * These fields have been moved here from private function local
+	   * declarations merely to save stack space during encoding.
+	   */
+//#ifndef FLAC__INTEGER_ONLY_LIBRARY
+	//FLAC__real lp_coeff[FLAC__MAX_LPC_ORDER][FLAC__MAX_LPC_ORDER]; /* from process_subframe_() */
+//#endif
+	  this.partitioned_rice_contents_extra = []; // EntropyCodingMethod_PartitionedRiceContents[2]; /* from find_best_partition_order_() */
+	  this.is_being_deleted = false; /* if true, call to ..._finish() from ..._delete() will not call the callbacks */
+  }
+
+	/*
+	 * The data for the verify section
+	 */
+	function Verify() {
+		this.decoder = null; // Decoder
+		this.state_hint = null; //EncoderStateHint 
+		this.needs_magic_hack = false;
+		this.input_fifo = null; //verify_input_fifo 
+		this.output = null; //verify_output 
+    this.error_stats = null;
+    /*
+		struct {
+			FLAC__uint64 absolute_sample;
+			unsigned frame_number;
+			unsigned channel;
+			unsigned sample;
+			FLAC__int32 expected;
+			FLAC__int32 got;
+		} error_stats;
+    */
+	}
 
 }());
