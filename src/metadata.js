@@ -46,23 +46,6 @@
   Metadata.UNDEFINED = 7;
   /**< marker to denote beginning of undefined type range; this number will increase as new metadata types are added */
 
-  /** Maps a Type to a JS string.
-   *
-   *  Using a Type as the index to this array will
-   *  give the string equivalent.  The contents should not be modified.
-   */
-  Metadata.TYPE_STRING_TABLE = [
-    'StreamInfo',
-    'Padding',
-    'Application',
-    'SeekTable',
-    'VorbisComment',
-    'CueSheet',
-    'Picture',
-    'Undefined'
-  ];
-
-
   /** FLAC metadata block structure.  (c.f. <A HREF="../format.html#metadata_block">format specification</A>)
    */
   function Metadata(type) {
@@ -556,7 +539,7 @@
   function FLAC__StreamMetadata_Picture_Type() {
   }
 
-  _proto = FLAC__StreamMetadata_Picture_Type.TYPE_prototype;
+  _proto = FLAC__StreamMetadata_Picture_Type.prototype;
 
   _proto.OTHER = 0; /**< Other */
   _proto.FILE_ICON_STANDARD = 1; /**< 32x32 pixels 'file icon' (PNG only) */
