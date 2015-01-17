@@ -1,4 +1,6 @@
-(function () {
+(function (global) {
+
+  var libFlac = global.libFLAC;
 
   /* Things should be fastest when this matches the machine word size */
   /* WATCHOUT: if you change this you must also change the following #defines down to SWAP_BE_WORD_TO_HOST below to match */
@@ -49,7 +51,7 @@
     this.bits = 0; /* # of used bits in accum */
   }
 
-  flac.BitWriter = BitWriter;
+  libFLAC.BitWriter = BitWriter;
 
   var _proto = BitWriter.prototype;
 
@@ -561,4 +563,4 @@
     }
   };
 
-}());
+}(this.self || global));

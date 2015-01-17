@@ -600,6 +600,62 @@ var flac = {};
   //typedef void (*FLAC__StreamEncoderProgressCallback)(const FLAC__StreamEncoder *encoder, FLAC__uint64 bytes_written, FLAC__uint64 samples_written, unsigned frames_written, unsigned total_frames_estimate, void *client_data);
 
 
+  function CompressionLevel (level) {
+
+    if (level === 0 || level === 3) {
+	    this.do_mid_side_stereo = false;
+    } else {
+	    this.do_mid_side_stereo = true;
+    }
+
+    if (level === 1 || level === 4) {
+	    this.loose_mid_side_stereo = true;
+    } else {
+	    this.loose_mid_side_stereo = false;
+    }
+
+    if (level < 3) {
+	    this.max_lpc_order = 0;
+    } else if (level < 4) {
+	    this.max_lpc_order = 6;
+    } else if (level < 8) {
+	    this.max_lpc_order = 8;
+    } else {
+	    this.max_lpc_order = 12;
+    }
+
+	  this.qlp_coeff_precision = 0;
+
+	  this.do_qlp_coeff_prec_search = false;
+
+	  this.do_escape_coding = false;
+
+    if (level < 7) {
+	    this.do_exhaustive_model_search = false;
+    } else {
+	    this.do_exhaustive_model_search = true;
+    }
+
+	  this.unsigned min_residual_partition_order = 0;
+
+    if (level < 3) {
+	    this.max_residual_partition_order = 3;
+    } else if (level < 5) {
+	    this.max_residual_partition_order = 4;
+    } else if (level < 6) {
+	    this.max_residual_partition_order = 5;
+    } else {
+	    this.max_residual_partition_order = 6;
+    }
+
+	  this.rice_parameter_search_dist = 0;
+  }
+
+  var compression_levels_ = [];
+
+  for (var i = 0, il = 9; i < il; i++) {
+    compression_levels_[i] = new CompressionLevel(i);
+  }
 
 
   /***********************************************************************
@@ -627,7 +683,16 @@ var flac = {};
    * \retval FLAC__bool
    *    \c false if the encoder is already initialized, else \c true.
    */
-  _proto.setOggSerialNumber = function (serialNumber) {
+  _proto.setOggSerialNumber = function (value) {
+	  var tProtected = this.protected_;
+    
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  /* can't check encoder->private_->is_ogg since that's not set until init time */
+	  FLAC__ogg_encoder_aspect_set_serial_number(tProtected.ogg_encoder_aspect, value);
+	  return true;
   };
 
   /** Set the "verify" flag.  If \c true, the encoder will verify it's own
@@ -645,6 +710,14 @@ var flac = {};
    *    \c false if the encoder is already initialized, else \c true.
    */
   _proto.setVerify = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  tProtected.verify = value;
+	  return true;
   };
 
 
@@ -665,6 +738,23 @@ var flac = {};
    *    \c false if the encoder is already initialized, else \c true.
    */
   _proto.setStreamableSubset = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+	  tProtected.streamable_subset = value;
+	  return true;
+  };
+
+  _proto.setDoMD5 = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+	  tProtected.do_md5 = value;
+	  return true;
   };
 
   /** Set the number of channels to be encoded.
@@ -678,6 +768,14 @@ var flac = {};
    *    \c false if the encoder is already initialized, else \c true.
    */
   _proto.setChannels = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  tProtected.channels = value;
+	  return true;
   };
 
   /** Set the sample resolution of the input to be encoded.
@@ -695,6 +793,14 @@ var flac = {};
    *    \c false if the encoder is already initialized, else \c true.
    */
   _proto.setBitsPerSample = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  tProtected.bits_per_sample = value;
+	  return true;
   };
 
   /** Set the sample rate (in Hz) of the input to be encoded.
@@ -708,6 +814,14 @@ var flac = {};
    *    \c false if the encoder is already initialized, else \c true.
    */
   _proto.setSampleRate = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  tProtected.sample_rate = value;
+	  return true;
   };
 
   /** Set the compression level
@@ -772,6 +886,33 @@ var flac = {};
    *    \c false if the encoder is already initialized, else \c true.
    */
   _proto.setCompressionLevel = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  if (value >= compression_levels_.length) {
+		  value = compression_levels_.length - 1;
+    }
+
+	  ok &= this.setdo_mid_side_stereo         (compression_levels_[value].do_mid_side_stereo);
+	  ok &= this.setloose_mid_side_stereo      (compression_levels_[value].loose_mid_side_stereo);
+//#ifndef FLAC__INTEGER_ONLY_LIBRARY
+//	encoder->protected_->num_apodizations = 1;
+//	encoder->protected_->apodizations[0].type = FLAC__APODIZATION_TUKEY;
+//	encoder->protected_->apodizations[0].parameters.tukey.p = 0.5;
+//#endif
+	  ok &= this.setmax_lpc_order               (compression_levels_[value].max_lpc_order);
+	  ok &= this.setqlp_coeff_precision         (compression_levels_[value].qlp_coeff_precision);
+	  ok &= this.setdo_qlp_coeff_prec_search    (compression_levels_[value].do_qlp_coeff_prec_search);
+	  ok &= this.setdo_escape_coding            (compression_levels_[value].do_escape_coding);
+	  ok &= this.setdo_exhaustive_model_search  (compression_levels_[value].do_exhaustive_model_search);
+	  ok &= this.setmin_residual_partition_order(compression_levels_[value].min_residual_partition_order);
+	  ok &= this.setmax_residual_partition_order(compression_levels_[value].max_residual_partition_order);
+	  ok &= this.setrice_parameter_search_dist  (compression_levels_[value].rice_parameter_search_dist);
+
+	  return ok;
   };
 
   /** Set the blocksize to use while encoding.
@@ -788,6 +929,14 @@ var flac = {};
    *    \c false if the encoder is already initialized, else \c true.
    */
   _proto.setBlocksize = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  tProtected.blocksize = value;
+	  return true;
   };
 
   /** Set to \c true to enable mid-side encoding on stereo input.  The
@@ -803,6 +952,14 @@ var flac = {};
    *    \c false if the encoder is already initialized, else \c true.
    */
   _proto.setDoMidSideStereo = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  encoder->protected_->do_mid_side_stereo = value;
+	  return true;
   };
 
   /** Set to \c true to enable adaptive switching between mid-side and
@@ -820,6 +977,14 @@ var flac = {};
    *    \c false if the encoder is already initialized, else \c true.
    */
   _proto.setLooseMidSideStereo = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  encoder->protected_->loose_mid_side_stereo = value;
+	  return true;
   };
 
   /** Sets the apodization function(s) the encoder will use when windowing
@@ -865,8 +1030,16 @@ var flac = {};
    * \retval FLAC__bool
    *    \c false if the encoder is already initialized, else \c true.
    */
+   /*
   _proto.setApodization = function (specification) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
   };
+  */
 
 
   /** Set the maximum LPC order, or \c 0 to use only the fixed predictors.
@@ -880,6 +1053,14 @@ var flac = {};
    *    \c false if the encoder is already initialized, else \c true.
    */
   _proto.setMaxLpcOrder = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  encoder->protected_->max_lpc_order = value;
+	  return true;
   };
 
 
@@ -900,6 +1081,14 @@ var flac = {};
    *    \c false if the encoder is already initialized, else \c true.
    */
   _proto.setQlpCoeffPrecision = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  encoder->protected_->qlp_coeff_precision = value;
+	  return true;
   };
 
   /** Set to \c false to use only the specified quantized linear predictor
@@ -915,6 +1104,14 @@ var flac = {};
    *    \c false if the encoder is already initialized, else \c true.
    */
   _proto.setDoQlpCoeffPrecSearch = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  encoder->protected_->do_qlp_coeff_prec_search = value;
+	  return true;
   };
 
   /** Set to \c false to let the encoder estimate the best model order
@@ -930,6 +1127,14 @@ var flac = {};
    *    \c false if the encoder is already initialized, else \c true.
    */
   _proto.setDoExhaustiveModelSearch = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  encoder->protected_->do_exhaustive_model_search = value;
+	  return true;
   };
 
   /** Set the minimum partition order to search when coding the residual.
@@ -954,6 +1159,14 @@ var flac = {};
    *    \c false if the encoder is already initialized, else \c true.
    */
   _proto.setMinResidualPartitionOrder = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  encoder->protected_->min_residual_partition_order = value;
+	  return true;
   };
 
   /** Set the maximum partition order to search when coding the residual.
@@ -978,6 +1191,14 @@ var flac = {};
    *    \c false if the encoder is already initialized, else \c true.
    */
   _proto.setMaxResidualPartitionOrder = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  encoder->protected_->max_residual_partition_order = value;
+	  return true;
   };
 
   /** Set an estimate of the total samples that will be encoded.
@@ -995,6 +1216,14 @@ var flac = {};
    *    \c false if the encoder is already initialized, else \c true.
    */
   _proto.setTotalSamplesEstimate = function (value) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  encoder->protected_->total_samples_estimate = value;
+	  return true;
   };
 
   /** Set the metadata blocks to be emitted to the stream before encoding.
@@ -1079,6 +1308,35 @@ var flac = {};
    *    \a num_blocks > 65535 if encoding to Ogg FLAC, else \c true.
    */
   _proto.setMetadata = function (metadata, num_blocks) {
+	  var tProtected = this.protected_;
+
+	  if (tProtected.state != FLAC__STREAM_ENCODER_UNINITIALIZED) {
+		  return false;
+    }
+
+	  if (metadata === 0) {
+		  num_blocks = 0;
+    }
+
+	  if (num_blocks === 0) {
+		  metadata = 0;
+    }
+
+	  /* realloc() does not do exactly what we want so... */
+	  if (tProtected.metadata) {
+		  free(tProtected.metadata);
+		  encoder->protected_->metadata = 0;
+		  encoder->protected_->num_metadata_blocks = 0;
+	  }
+
+	  if (num_blocks) {
+		  encoder->protected_->metadata = new Array(num_blocks);
+		  encoder->protected_->num_metadata_blocks = num_blocks;
+	  }
+
+	  if (!FLAC__ogg_encoder_aspect_set_num_metadata(tProtected.ogg_encoder_aspect, num_blocks))
+		return false;
+	return true;
   };
 
   /** Get the current encoder state.

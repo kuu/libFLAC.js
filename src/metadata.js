@@ -1,159 +1,159 @@
 'use strict';
 
 /*****************************************************************************
- *
- * Meta-data structures
- *
- *****************************************************************************/
+*
+* Meta-data structures
+*
+*****************************************************************************/
 (function () {
 
-  var _proto;
+var _proto;
 
-  flac.Metadata = Metadata;
-  flac.StreamInfo = StreamInfo;
-  flac.Padding = Padding;
-  flac.Application = Application;
-  flac.SeekTable = SeekTable;
-  flac.VorbisComment = VorbisComment;
-  flac.CueSheet = CueSheet;
-  flac.Picture = Picture;
-  flac.Unknown = Unknown;
+flac.Metadata = Metadata;
+flac.StreamInfo = StreamInfo;
+flac.Padding = Padding;
+flac.Application = Application;
+flac.SeekTable = SeekTable;
+flac.VorbisComment = VorbisComment;
+flac.CueSheet = CueSheet;
+flac.Picture = Picture;
+flac.Unknown = Unknown;
 
 
-  /** An enumeration of the available metadata block types. */
+/** An enumeration of the available metadata block types. */
 
-  Metadata.STREAMINFO = 0;
-  /**< <A HREF="../format.html#metadata_block_streaminfo">STREAMINFO</A> block */
+Metadata.STREAMINFO = 0;
+/**< <A HREF="../format.html#metadata_block_streaminfo">STREAMINFO</A> block */
 
-  Metadata.PADDING = 1;
-  /**< <A HREF="../format.html#metadata_block_padding">PADDING</A> block */
+Metadata.PADDING = 1;
+/**< <A HREF="../format.html#metadata_block_padding">PADDING</A> block */
 
-  Metadata.APPLICATION = 2;
-  /**< <A HREF="../format.html#metadata_block_application">APPLICATION</A> block */
+Metadata.APPLICATION = 2;
+/**< <A HREF="../format.html#metadata_block_application">APPLICATION</A> block */
 
-  Metadata.SEEKTABLE = 3;
-  /**< <A HREF="../format.html#metadata_block_seektable">SEEKTABLE</A> block */
+Metadata.SEEKTABLE = 3;
+/**< <A HREF="../format.html#metadata_block_seektable">SEEKTABLE</A> block */
 
-  Metadata.VORBIS_COMMENT = 4;
-  /**< <A HREF="../format.html#metadata_block_vorbis_comment">VORBISCOMMENT</A> block (a.k.a. FLAC tags) */
+Metadata.VORBIS_COMMENT = 4;
+/**< <A HREF="../format.html#metadata_block_vorbis_comment">VORBISCOMMENT</A> block (a.k.a. FLAC tags) */
 
-  Metadata.CUESHEET = 5;
-  /**< <A HREF="../format.html#metadata_block_cuesheet">CUESHEET</A> block */
+Metadata.CUESHEET = 5;
+/**< <A HREF="../format.html#metadata_block_cuesheet">CUESHEET</A> block */
 
-  Metadata.PICTURE = 6;
-  /**< <A HREF="../format.html#metadata_block_picture">PICTURE</A> block */
+Metadata.PICTURE = 6;
+/**< <A HREF="../format.html#metadata_block_picture">PICTURE</A> block */
 
-  Metadata.UNDEFINED = 7;
-  /**< marker to denote beginning of undefined type range; this number will increase as new metadata types are added */
+Metadata.UNDEFINED = 7;
+/**< marker to denote beginning of undefined type range; this number will increase as new metadata types are added */
 
-  /** FLAC metadata block structure.  (c.f. <A HREF="../format.html#metadata_block">format specification</A>)
-   */
-  function Metadata(type) {
-    this.type = type; // enum Metadata.TYPE_XXX
-    /**< The type of the metadata block; used determine which member of the
-     * \a data union to dereference.  If type >= FLAC__METADATA_TYPE_UNDEFINED
-     * then \a data.unknown must be used. */
+/** FLAC metadata block structure.  (c.f. <A HREF="../format.html#metadata_block">format specification</A>)
+ */
+function Metadata(type) {
+  this.type = type; // enum Metadata.TYPE_XXX
+  /**< The type of the metadata block; used determine which member of the
+   * \a data union to dereference.  If type >= FLAC__METADATA_TYPE_UNDEFINED
+   * then \a data.unknown must be used. */
 
-    this.is_last = false;
-    /**< \c true if this metadata block is the last, else \a false */
+  this.is_last = false;
+  /**< \c true if this metadata block is the last, else \a false */
 
-    this.length = 0;
-    /**< Length, in bytes, of the block data as it appears in the stream. */
-  }
+  this.length = 0;
+  /**< Length, in bytes, of the block data as it appears in the stream. */
+}
 
-  _proto = Metadata.prototype;
+_proto = Metadata.prototype;
 
-  _proto.IS_LAST_LEN = 1;
-  _proto.TYPE_LEN = 7;
-  _proto.LENGTH_LEN = 24;
+_proto.IS_LAST_LEN = 1;
+_proto.TYPE_LEN = 7;
+_proto.LENGTH_LEN = 24;
 
-  /** The total stream length of a metadata block header in bytes. */
-  _proto.HEADER_LENGTH = 4;
+/** The total stream length of a metadata block header in bytes. */
+_proto.HEADER_LENGTH = 4;
 
-  /** Returns \c true if the object was correctly constructed
-   *  (i.e. the underlying ::FLAC__StreamMetadata object was
-   *  properly allocated), else \c false.
-   */
-  _proto.is_valid = function () {
-  };
+/** Returns \c true if the object was correctly constructed
+ *  (i.e. the underlying ::FLAC__StreamMetadata object was
+ *  properly allocated), else \c false.
+ */
+_proto.is_valid = function () {
+};
 
-  /** Returns \c true if this block is the last block in a
-   *  stream, else \c false.
-   *
-   * \assert
-   *   \code is_valid() \endcode
-   */
-  _proto.get_is_last = function () {
-    return this.is_last;
-  };
+/** Returns \c true if this block is the last block in a
+ *  stream, else \c false.
+ *
+ * \assert
+ *   \code is_valid() \endcode
+ */
+_proto.get_is_last = function () {
+  return this.is_last;
+};
 
-  /** Returns the type of the block.
-   *
-   * \assert
-   *   \code is_valid() \endcode
-   */
-  _proto.get_type = function () {
-    return this.type;
-  };
+/** Returns the type of the block.
+ *
+ * \assert
+ *   \code is_valid() \endcode
+ */
+_proto.get_type = function () {
+  return this.type;
+};
 
-  /** Returns the stream length of the metadata block.
-   *
-   * \note
-   *   The length does not include the metadata block header,
-   *   per spec.
-   *
-   * \assert
-   *   \code is_valid() \endcode
-   */
-  _proto.get_length = function () {
-    return this.length;
-  };
+/** Returns the stream length of the metadata block.
+ *
+ * \note
+ *   The length does not include the metadata block header,
+ *   per spec.
+ *
+ * \assert
+ *   \code is_valid() \endcode
+ */
+_proto.get_length = function () {
+  return this.length;
+};
 
-  /** Sets the "is_last" flag for the block.  When using the iterators
-   *  it is not necessary to set this flag; they will do it for you.
-   *
-   * \assert
-   *   \code is_valid() \endcode
-   */
-  _proto.set_is_last = function (is_last) {
-  };
+/** Sets the "is_last" flag for the block.  When using the iterators
+ *  it is not necessary to set this flag; they will do it for you.
+ *
+ * \assert
+ *   \code is_valid() \endcode
+ */
+_proto.set_is_last = function (is_last) {
+};
 
-  /** Create a deep copy of an object and return it. */
-  _proto.clone = function (metadata) {
-  };
+/** Create a deep copy of an object and return it. */
+_proto.clone = function (metadata) {
+};
 
-  /** FLAC STREAMINFO structure.  (c.f. <A HREF="../format.html#metadata_block_streaminfo">format specification</A>)
-   */
-  function StreamInfo() {
-    Metadata.call(this, Metadata.TYPE_STREAMINFO);
-    this.min_blocksize = 0;
-    this.max_blocksize = 0;
-    this.min_framesize = 0;
-    this.max_framesize = 0;
-    this.sample_rate = 0;
-    this.channels = 0;
-    this.bits_per_sample = 0;
-    this.total_samples = 0;
-    this.md5sum = new Uint8Array(16);
-  }
+/** FLAC STREAMINFO structure.  (c.f. <A HREF="../format.html#metadata_block_streaminfo">format specification</A>)
+ */
+function StreamInfo() {
+  Metadata.call(this, Metadata.TYPE_STREAMINFO);
+  this.min_blocksize = 0;
+  this.max_blocksize = 0;
+  this.min_framesize = 0;
+  this.max_framesize = 0;
+  this.sample_rate = 0;
+  this.channels = 0;
+  this.bits_per_sample = 0;
+  this.total_samples = 0;
+  this.md5sum = new Uint8Array(16);
+}
 
-  _proto = StreamInfo.prototype = Object.create(Metadata.prototype);
-  _proto.constructor = StreamInfo;
+_proto = StreamInfo.prototype = Object.create(Metadata.prototype);
+_proto.constructor = StreamInfo;
 
-  _proto.MIN_BLOCK_SIZE_LEN = 16;
-  _proto.MAX_BLOCK_SIZE_LEN = 16;
-  _proto.MIN_FRAME_SIZE_LEN = 24;
-  _proto.MAX_FRAME_SIZE_LEN = 24;
-  _proto.SAMPLE_RATE_LEN = 20;
-  _proto.CHANNELS_LEN = 3;
-  _proto.BITS_PER_SAMPLE_LEN = 5;
-  _proto.TOTAL_SAMPLES_LEN = 36;
-  _proto.MD5SUM_LEN = 128;
+_proto.MIN_BLOCK_SIZE_LEN = 16;
+_proto.MAX_BLOCK_SIZE_LEN = 16;
+_proto.MIN_FRAME_SIZE_LEN = 24;
+_proto.MAX_FRAME_SIZE_LEN = 24;
+_proto.SAMPLE_RATE_LEN = 20;
+_proto.CHANNELS_LEN = 3;
+_proto.BITS_PER_SAMPLE_LEN = 5;
+_proto.TOTAL_SAMPLES_LEN = 36;
+_proto.MD5SUM_LEN = 128;
 
-  /** The total stream length of the STREAMINFO block in bytes. */
-  _proto.LENGTH = 34;
+/** The total stream length of the STREAMINFO block in bytes. */
+_proto.LENGTH = 34;
 
-  _proto.get_min_blocksize = function () {
+_proto.get_min_blocksize = function () {
   };
 
   _proto.get_max_blocksize = function () {};
